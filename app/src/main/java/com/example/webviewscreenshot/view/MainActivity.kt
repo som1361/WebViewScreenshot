@@ -8,12 +8,16 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.webviewscreenshot.R
+import com.example.webviewscreenshot.domain.repository.SQLiteHistoryRepository
 import com.example.webviewscreenshot.utils.*
+import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var mMainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        mMainViewModel = MainViewModel(SQLiteHistoryRepository())
         super.onCreate(savedInstanceState)
         loadView()
         respondToClicks()
@@ -30,8 +34,12 @@ class MainActivity : AppCompatActivity() {
             else
                 loadContent(url_edittext.text.toString())
         }
+capture_button.setOnClickListener {
 
-        main_layout.setOnTouchListener(object: View.OnTouchListener {
+}
+
+//hide soft keyboard after clicking outside Url edittext
+        main_layout.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 this@MainActivity.hideSoftKeyboard()
                 return true
@@ -39,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    //it loads the content into the WEBVIEW
     private fun loadContent(url: String) {
         content_webview.getSettings().setJavaScriptEnabled(true)
         content_webview.getSettings().setDomStorageEnabled(true)
@@ -60,5 +69,6 @@ class MainActivity : AppCompatActivity() {
         content_webview.loadUrl(url)
     }
 
+    // url validation process
     private fun isValidUrl() = url_edittext.text.toString().isValidUrl()
 }
