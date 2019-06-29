@@ -34,9 +34,13 @@ class MainActivity : AppCompatActivity() {
             else
                 loadContent(url_edittext.text.toString())
         }
-capture_button.setOnClickListener {
-
-}
+        capture_button.setOnClickListener {
+            mMainViewModel.doWhenCaptureButtonIsClicked(
+                applicationContext,
+                content_webview,
+                url_edittext.text.toString()
+            )
+        }
 
 //hide soft keyboard after clicking outside Url edittext
         main_layout.setOnTouchListener(object : View.OnTouchListener {
