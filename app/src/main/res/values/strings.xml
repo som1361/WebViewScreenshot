@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WebviewScreenshot</string>
+    <string name="invalid_url">Please enter a valid URL.</string>
+</resources>
