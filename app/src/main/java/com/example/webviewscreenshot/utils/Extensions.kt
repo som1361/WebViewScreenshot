@@ -1,14 +1,11 @@
-package com.example.qoutecalculator.utils
+package com.example.webviewscreenshot.utils
 
 import android.content.Context
-import android.graphics.Color
 import android.support.v4.util.PatternsCompat
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
-import android.widget.Toast
 
 fun String.isValidUrl(): Boolean
         = this.isNotEmpty() &&

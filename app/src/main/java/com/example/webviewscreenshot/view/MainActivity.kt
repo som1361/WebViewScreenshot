@@ -1,19 +1,14 @@
 package com.example.webviewscreenshot.view
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.example.qoutecalculator.utils.hide
-import com.example.qoutecalculator.utils.hideSoftKeyboard
-import com.example.qoutecalculator.utils.isValidUrl
-import com.example.qoutecalculator.utils.show
 import com.example.webviewscreenshot.R
-import com.example.webviewscreenshot.utils.showFailMessage
+import com.example.webviewscreenshot.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
