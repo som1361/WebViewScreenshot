@@ -1,7 +1,6 @@
 package com.example.webviewscreenshot.domain.model
 
-data class Content(var image_url: String?, var url: String?) {
-    var id = 0
+import java.time.LocalDateTime
 
-    constructor() : this(null, null)
-}
+data class Content(var imageRef: String?, var url: String?, var dateTime: LocalDateTime?){
+    }

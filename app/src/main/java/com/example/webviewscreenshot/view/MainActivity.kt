@@ -8,7 +8,8 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.webviewscreenshot.R
-import com.example.webviewscreenshot.domain.repository.SQLiteHistoryRepository
+import com.example.webviewscreenshot.domain.model.ContentDao
+import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mMainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mMainViewModel = MainViewModel(SQLiteHistoryRepository())
+        mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
         super.onCreate(savedInstanceState)
         loadView()
         respondToClicks()
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
                 loadContent(url_edittext.text.toString())
         }
         capture_button.setOnClickListener {
+            listenToObservables()
             mMainViewModel.doWhenCaptureButtonIsClicked(
                 applicationContext,
                 content_webview,
@@ -48,6 +50,17 @@ class MainActivity : AppCompatActivity() {
                 this@MainActivity.hideSoftKeyboard()
                 return true
             }
+        })
+    }
+
+    private fun listenToObservables() {
+        mMainViewModel.saveContentObservable.subscribe({
+            main_progress_bar.hide()
+            showSuccessMessage(this, R.string.save_content_success)
+        })
+
+        mMainViewModel.saveContentErrorObservable.subscribe({
+            showFailMessage(this, R.string.save_content_failed)
         })
     }
 
