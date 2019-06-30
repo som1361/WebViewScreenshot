@@ -11,8 +11,10 @@ import com.example.webviewscreenshot.utils.saveToInternalStorage
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.observers.DisposableCompletableObserver
+import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.PublishSubject
@@ -24,11 +26,15 @@ class MainViewModel() {
     private lateinit var contentRepository: ContentRepository
     lateinit var saveContentObservable: CompletableSubject
     lateinit var saveContentErrorObservable: PublishSubject<Exception>
+    lateinit var getContentObservable: PublishSubject<List<Content>>
+    lateinit var getContentErrorObservable: PublishSubject<Exception>
 
     constructor(mContentRepository: ContentRepository) : this() {
         contentRepository = mContentRepository
         saveContentObservable = CompletableSubject.create()
         saveContentErrorObservable = PublishSubject.create()
+        getContentObservable = PublishSubject.create()
+        getContentErrorObservable = PublishSubject.create()
     }
 
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -46,7 +52,7 @@ class MainViewModel() {
             .subscribe(object : Consumer<String> {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun accept(savedImageAbsPath: String?) {
-                    val content = Content(savedImageAbsPath, url, LocalDateTime.now())
+                    val content = Content(savedImageAbsPath, url, LocalDateTime.now().toString())
                     saveContent(content)
                 }
 
@@ -66,6 +72,23 @@ class MainViewModel() {
                 override fun onError(e: Throwable) {
                     saveContentErrorObservable.onNext(e as Exception)
                 }
+            })
+        compositeDisposable.add(disposable)
+    }
+
+    fun getHistory() {
+        val disposable: Disposable = contentRepository.getContentList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableSingleObserver<List<Content>>(){
+                override fun onSuccess(t: List<Content>) {
+                    getContentObservable.onNext(t)
+                }
+
+                override fun onError(e: Throwable) {
+                    getContentErrorObservable.onNext(e as Exception)
+                }
+
             })
         compositeDisposable.add(disposable)
     }

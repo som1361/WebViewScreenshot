@@ -13,10 +13,10 @@ val COL_DATETIME = "datetime"
 
 
 class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
-
+    private var contentList: MutableList<Content> = ArrayList()
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable =
-            "CREATE TABLE $TABLE_NAME($COL_URL VARCHAR(256), $COL_IMAGE_REF VARCHAR(256), $COL_DATETIME DATETIME);"
+            "CREATE TABLE $TABLE_NAME($COL_URL VARCHAR(256), $COL_IMAGE_REF VARCHAR(256), $COL_DATETIME VARCHAR(256));"
         db?.execSQL(createTable)
         val createIndex = "CREATE INDEX ${TABLE_NAME}_${COL_URL} ON $TABLE_NAME ($COL_URL);"
         db?.execSQL(createIndex)
@@ -30,8 +30,28 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
         var contentValues = ContentValues()
         contentValues.put(COL_IMAGE_REF, content.imageRef)
         contentValues.put(COL_URL, content.url)
-        contentValues.put(COL_DATETIME, content.dateTime.toString())
+        contentValues.put(COL_DATETIME, content.dateTime)
 
         return db.insert(TABLE_NAME, null, contentValues)
     }
-}
+
+    fun getContentList(): List<Content>? {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME;"
+        val result = db.rawQuery(query, null)
+        result.moveToFirst()
+        do{
+            var content = Content()
+            content.imageRef = result.getString(result.getColumnIndex(COL_IMAGE_REF))
+            content.url = result.getString(result.getColumnIndex(COL_URL))
+            content.dateTime = result.getString(result.getColumnIndex(COL_DATETIME))
+
+            contentList.add(content)
+        }while(result.moveToNext())
+
+        result.close()
+        db.close()
+
+        return contentList
+    }
+    }
