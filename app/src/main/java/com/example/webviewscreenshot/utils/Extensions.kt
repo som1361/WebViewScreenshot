@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
-import android.R.layout
 import android.graphics.Canvas
 
 
@@ -31,7 +30,8 @@ fun ProgressBar.hide(){
 fun View.loadBitmap(): Bitmap {
     val b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val c = Canvas(b)
-    this.layout(0, 0, this.layoutParams.width, layoutParams.height)
+//    layout(0, 0, layoutParams.width, layoutParams.height)
     draw(c)
     return b
 }
+

@@ -34,9 +34,7 @@ class MainViewModel() {
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     fun doWhenCaptureButtonIsClicked(context: Context, view: View, url: String) {
-
         val disposable = Observable.fromCallable(object : Callable<String> {
-            @RequiresApi(Build.VERSION_CODES.DONUT)
             override fun call(): String {
                 return saveToInternalStorage(
                     context,
