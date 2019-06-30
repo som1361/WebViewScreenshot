@@ -1,5 +1,6 @@
 package com.example.webviewscreenshot.view
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -42,6 +43,10 @@ class MainActivity : AppCompatActivity() {
                 content_webview,
                 url_edittext.text.toString()
             )
+
+            history_button.setOnClickListener {
+                goToHistoryActivity()
+            }
         }
 
 //hide soft keyboard after clicking outside Url edittext
@@ -51,6 +56,11 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    private fun goToHistoryActivity() {
+        val intent = Intent(this, HistoryActivity::class.java)
+        startActivity(intent)
     }
 
     private fun listenToObservables() {
