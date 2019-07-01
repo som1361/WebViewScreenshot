@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                 if (!url.startsWith("http://") && !url.startsWith("https://")) {
                     url = "http://" + url;
                 }
+                url_edittext.setText(url)
                 loadContent(url)
             }
         }
