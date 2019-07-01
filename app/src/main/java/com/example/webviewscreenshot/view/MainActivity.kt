@@ -60,10 +60,10 @@ class MainActivity : AppCompatActivity() {
                 content_webview,
                 url_edittext.text.toString()
             )
+        }
 
-            history_button.setOnClickListener {
-                goToHistoryActivity()
-            }
+        history_button.setOnClickListener {
+            goToHistoryActivity()
         }
 
 //hide soft keyboard after clicking outside Url edittext
