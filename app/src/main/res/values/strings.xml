@@ -4,4 +4,6 @@
     <string name="save_content_success">Url was saved.</string>
     <string name="save_content_failed">Url save process was failed.</string>
     <string name="get_history_failed">getting url history failed.</string>
+    <string name="remove_content_success">Delete item was done.</string>
+    <string name="remove_content_failed">Delete item was failed.</string>
 </resources>

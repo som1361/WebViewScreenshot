@@ -122,6 +122,11 @@ class MainActivity : AppCompatActivity() {
     // url validation process
     private fun isValidUrl() = url_edittext.text.toString().isValidUrl()
 
+    override fun onStop() {
+        super.onStop()
+        mMainViewModel.cancelDBConnection()
+    }
+
     object Constants {
         const val URL = "url"
     }

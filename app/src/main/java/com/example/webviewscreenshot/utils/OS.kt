@@ -37,3 +37,7 @@ fun saveToInternalStorage(
     return pathName.getAbsolutePath()
 }
 
+fun removeFromInternalStorage(filePath:String) {
+    File(filePath).delete()
+}
+

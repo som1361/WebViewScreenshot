@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.provider.BaseColumns
 
 val DB_NAME = "Urls"
 val TABLE_NAME = "UrlDetails"
@@ -57,11 +58,6 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
 
     fun removeContent(content: Content): Int? {
         val db = this.writableDatabase
-        var contentValues = ContentValues()
-        contentValues.put(COL_IMAGE_REF, content.imageRef)
-        contentValues.put(COL_URL, content.url)
-        contentValues.put(COL_DATETIME, content.dateTime)
-
-        return db.delete(TABLE_NAME, "$COL_URL = ${content.url}  and $COL_DATETIME = ${content.url}" , null)
+        return db.delete(TABLE_NAME, COL_URL +"=? AND " + COL_DATETIME + "=?", arrayOf(content.url, content.dateTime))
     }
 }

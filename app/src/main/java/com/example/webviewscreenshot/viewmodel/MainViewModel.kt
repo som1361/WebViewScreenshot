@@ -113,4 +113,8 @@ class MainViewModel() {
             })
         compositeDisposable.add(disposable)
     }
+
+    fun cancelDBConnection() {
+        compositeDisposable.clear()
+    }
 }

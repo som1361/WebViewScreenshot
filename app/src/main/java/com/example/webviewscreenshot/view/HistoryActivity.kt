@@ -8,16 +8,17 @@ import com.example.webviewscreenshot.R
 import com.example.webviewscreenshot.domain.model.Content
 import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
-import com.example.webviewscreenshot.utils.hide
-import com.example.webviewscreenshot.utils.show
-import com.example.webviewscreenshot.utils.showFailMessage
+import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_history.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class HistoryActivity : AppCompatActivity() {
     private lateinit var mMainViewModel: MainViewModel
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private lateinit var mContentAdapter: ContentAdapter
+    private var itemPosition: Int = 0
+    lateinit var imagePath: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +37,18 @@ class HistoryActivity : AppCompatActivity() {
             history_progress_bar.hide()
             showFailMessage(this, R.string.get_history_failed)
         })
+        mMainViewModel.removeContentObservable.subscribe({
+            history_progress_bar.hide()
+            //update recyclerview
+            mContentAdapter.removeItem(itemPosition)
+            //remove image from device internal storage
+            removeFromInternalStorage(imagePath)
+            showSuccessMessage(this, R.string.remove_content_success)
+        })
+
+        mMainViewModel.removeContentErrorObservable.subscribe({
+            showFailMessage(this, R.string.remove_content_failed)
+        })
     }
 
     private fun updateContentList(it: ArrayList<Content>?) {
@@ -52,8 +65,10 @@ class HistoryActivity : AppCompatActivity() {
                 position: Int,
                 content: Content
             ) {
-                 mContentAdapter.removeItem(position)
-                 mMainViewModel.removeContent(content)
+                itemPosition = position
+                imagePath = content.imageRef.toString()
+                //remove item from DB
+                mMainViewModel.removeContent(content)
             }
 
             override fun doWhenItemUrlIsClicked(content: Content) = gotoMainActivity(content)
@@ -68,13 +83,8 @@ class HistoryActivity : AppCompatActivity() {
         history_recyclerview.layoutManager = mLinearLayoutManager
         history_recyclerview.adapter = mContentAdapter
         history_progress_bar.hide()
-        // configSearchDebounce()
         history_progress_bar.show()
         mMainViewModel.getHistory()
-    }
-
-    private fun configSearchDebounce() {
-
     }
 
     private fun gotoMainActivity(content: Content) {
@@ -84,5 +94,10 @@ class HistoryActivity : AppCompatActivity() {
         intent.putExtras(bundle)
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMainViewModel.cancelDBConnection()
     }
 }
