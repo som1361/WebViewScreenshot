@@ -1,5 +1,6 @@
 package com.example.webviewscreenshot.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -46,23 +47,41 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun respondToClicks() {
+        mContentAdapter.setItemClickListener(object : AdapterActionListener {
+            override fun doWhenDeleteItemIsClicked(
+                position: Int,
+                content: Content
+            ) {
 
+            }
+
+            override fun doWhenItemUrlIsClicked(content: Content) = gotoMainActivity(content)
+            override fun doWhenItemImageIsClicked(content: Content) = gotoMainActivity(content)
+        })
     }
 
     private fun loadView() {
         setContentView(R.layout.activity_history)
-        mContentAdapter = ContentAdapter(ContentListener { recipeId ->
-        })
+        mContentAdapter = ContentAdapter()
         mLinearLayoutManager = LinearLayoutManager(this)
         history_recyclerview.layoutManager = mLinearLayoutManager
         history_recyclerview.adapter = mContentAdapter
         history_progress_bar.hide()
-       // configSearchDebounce()
+        // configSearchDebounce()
         history_progress_bar.show()
         mMainViewModel.getHistory()
     }
 
     private fun configSearchDebounce() {
 
+    }
+
+    private fun gotoMainActivity(content: Content) {
+     val bundle = Bundle()
+        bundle.putString(MainActivity.Constants.IMAGE_REF, content.imageRef)
+        bundle.putString(MainActivity.Constants.URL, content.url)
+        val intent = Intent()
+        intent.putExtras(bundle)
+        startActivity(intent)
     }
 }

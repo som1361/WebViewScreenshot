@@ -13,6 +13,7 @@ import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
+import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +28,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadView() {
         setContentView(R.layout.activity_main)
+        val bundle = intent.extras
+        if (bundle != null)
+        {
+            url_search_editText.setText(bundle.getString(Constants.URL))
+        }
     }
 
     private fun respondToClicks() {
@@ -98,4 +104,9 @@ class MainActivity : AppCompatActivity() {
 
     // url validation process
     private fun isValidUrl() = url_edittext.text.toString().isValidUrl()
+
+    object Constants {
+        const val URL = "url"
+        const val IMAGE_REF = "imageRef"
+    }
 }

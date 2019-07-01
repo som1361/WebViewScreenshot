@@ -9,8 +9,10 @@ import com.example.webviewscreenshot.domain.model.Content
 import kotlinx.android.synthetic.main.content_item.view.*
 
 //Make the class extend RecyclerView.ViewHolder, allowing the adapter to use it as as a ViewHolder
-class ContentAdapter(val clickListener: ContentListener) : RecyclerView.Adapter<ContentAdapter.ContentHolder>() {
+class ContentAdapter() : RecyclerView.Adapter<ContentAdapter.ContentHolder>() {
+    lateinit var clickListener: AdapterActionListener
     var contents: List<Content> = arrayListOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentAdapter.ContentHolder {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.content_item, parent, false)
         return ContentHolder(view!!)
@@ -19,7 +21,7 @@ class ContentAdapter(val clickListener: ContentListener) : RecyclerView.Adapter<
     override fun getItemCount() = contents.size
 
     override fun onBindViewHolder(holder: ContentAdapter.ContentHolder, position: Int) {
-        holder.bindContent(clickListener, contents[position])
+        holder.bindContent(contents[position], clickListener, position)
     }
 
     fun updateList(contentList: List<Content>) {
@@ -27,26 +29,41 @@ class ContentAdapter(val clickListener: ContentListener) : RecyclerView.Adapter<
 
     }
 
+    fun setItemClickListener(clickListener: AdapterActionListener) {
+        this.clickListener = clickListener
+    }
+
     class ContentHolder(v: View) : RecyclerView.ViewHolder(v) {
         //Add a reference to the view you’ve inflated to allow the ViewHolder to access the views as an extension property
         private var view: View = v
         private var content: Content? = null
 
-        companion object {
-            //Add a key for easy reference to the item launching the RecyclerView
-            private val CONTENT_KEY = "CONTENT"
-        }
-
-        fun bindContent(clickListener: ContentListener, content: Content) {
+        fun bindContent(
+            content: Content,
+            clickListener: AdapterActionListener,
+            position: Int
+        ) {
             this.content = content
-           // Glide.with(view.context).load(content.imageRef).into(view.itemImage)
-            view.itemImage.text = content.imageRef
-            view.itemTime.text = content.dateTime.toString()
-            view.itemUrl.text = content.url
-            view.setOnClickListener { clickListener.onClick(content) }
+            // Glide.with(view.context).load(content.imageRef).into(view.itemImage)
+            view.item_image.text = content.imageRef
+            view.item_time.text = content.dateTime.toString()
+            view.item_url.text = content.url
+            view.item_delete_button.setOnClickListener {
+                clickListener.doWhenDeleteItemIsClicked(position, content)
+            }
+            view.item_image.setOnClickListener {
+                clickListener.doWhenItemImageIsClicked(content)
+            }
+            view.item_url.setOnClickListener {
+                clickListener.doWhenItemUrlIsClicked(content)
+            }
         }
     }
 }
-class ContentListener(val clickListener: (content: String) -> Unit) {
-    fun onClick(content: Content) = clickListener(content.url.toString())
+
+interface AdapterActionListener {
+    fun doWhenDeleteItemIsClicked(position: Int, content: Content)
+    fun doWhenItemUrlIsClicked(content: Content)
+    fun doWhenItemImageIsClicked(content: Content)
 }
+
