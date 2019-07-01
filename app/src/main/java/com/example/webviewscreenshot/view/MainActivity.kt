@@ -29,8 +29,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val bundle = intent.extras
-        if (bundle != null)
-        {
+        if (bundle != null) {
             url_search_editText.setText(bundle.getString(Constants.URL))
         }
     }
@@ -43,8 +42,16 @@ class MainActivity : AppCompatActivity() {
         go_button.setOnClickListener {
             if (!isValidUrl())
                 showFailMessage(this, R.string.invalid_url)
-            else
-                loadContent(url_edittext.text.toString())
+            else {
+                var url = url_edittext.text.toString()
+                if (!url.startsWith("www.") && !url.startsWith("http://") && !url.startsWith("https://")) {
+                    url = "www." + url;
+                }
+                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    url = "http://" + url;
+                }
+                loadContent(url)
+            }
         }
         capture_button.setOnClickListener {
             listenToObservables()
