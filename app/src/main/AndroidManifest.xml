@@ -14,7 +14,7 @@
         <activity android:name=".view.HistoryActivity">
         </activity>
         <activity android:name=".view.MainActivity"
-        android:launchMode="singleTop">
+        android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

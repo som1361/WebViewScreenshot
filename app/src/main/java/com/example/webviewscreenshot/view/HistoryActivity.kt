@@ -79,10 +79,10 @@ class HistoryActivity : AppCompatActivity() {
 
     private fun gotoMainActivity(content: Content) {
      val bundle = Bundle()
-        bundle.putString(MainActivity.Constants.IMAGE_REF, content.imageRef)
         bundle.putString(MainActivity.Constants.URL, content.url)
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtras(bundle)
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent)
     }
 }

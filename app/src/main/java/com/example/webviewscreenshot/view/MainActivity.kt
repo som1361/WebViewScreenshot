@@ -13,7 +13,6 @@ import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
-import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -26,16 +25,22 @@ class MainActivity : AppCompatActivity() {
         respondToClicks()
     }
 
-    override fun onStart() {
-        super.onStart()
-        val bundle = intent.extras
+    private fun loadView() {
+        setContentView(R.layout.activity_main)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val bundle = intent!!.extras
         if (bundle != null) {
-            url_search_editText.setText(bundle.getString(Constants.URL))
+            updateViewContents(bundle.getString(Constants.URL))
         }
     }
 
-    private fun loadView() {
-        setContentView(R.layout.activity_main)
+    private fun updateViewContents(url: String?) {
+        url_edittext.setText(url)
+        loadContent(url!!)
+
     }
 
     private fun respondToClicks() {
@@ -118,6 +123,5 @@ class MainActivity : AppCompatActivity() {
 
     object Constants {
         const val URL = "url"
-        const val IMAGE_REF = "imageRef"
     }
 }
