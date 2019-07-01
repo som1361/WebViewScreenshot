@@ -26,13 +26,17 @@ class MainActivity : AppCompatActivity() {
         respondToClicks()
     }
 
-    private fun loadView() {
-        setContentView(R.layout.activity_main)
+    override fun onStart() {
+        super.onStart()
         val bundle = intent.extras
         if (bundle != null)
         {
             url_search_editText.setText(bundle.getString(Constants.URL))
         }
+    }
+
+    private fun loadView() {
+        setContentView(R.layout.activity_main)
     }
 
     private fun respondToClicks() {

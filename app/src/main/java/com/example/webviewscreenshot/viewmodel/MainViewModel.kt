@@ -21,18 +21,23 @@ import io.reactivex.subjects.PublishSubject
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.Callable
+import kotlin.collections.ArrayList
 
 class MainViewModel() {
     private lateinit var contentRepository: ContentRepository
     lateinit var saveContentObservable: CompletableSubject
     lateinit var saveContentErrorObservable: PublishSubject<Exception>
-    lateinit var getContentObservable: PublishSubject<List<Content>>
+    lateinit var removeContentObservable: CompletableSubject
+    lateinit var removeContentErrorObservable: PublishSubject<Exception>
+    lateinit var getContentObservable: PublishSubject<ArrayList<Content>>
     lateinit var getContentErrorObservable: PublishSubject<Exception>
 
     constructor(mContentRepository: ContentRepository) : this() {
         contentRepository = mContentRepository
         saveContentObservable = CompletableSubject.create()
         saveContentErrorObservable = PublishSubject.create()
+        removeContentObservable = CompletableSubject.create()
+        removeContentErrorObservable = PublishSubject.create()
         getContentObservable = PublishSubject.create()
         getContentErrorObservable = PublishSubject.create()
     }
@@ -80,8 +85,8 @@ class MainViewModel() {
         val disposable: Disposable = contentRepository.getContentList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<List<Content>>(){
-                override fun onSuccess(t: List<Content>) {
+            .subscribeWith(object : DisposableSingleObserver<ArrayList<Content>>(){
+                override fun onSuccess(t: ArrayList<Content>) {
                     getContentObservable.onNext(t)
                 }
 
@@ -89,6 +94,22 @@ class MainViewModel() {
                     getContentErrorObservable.onNext(e as Exception)
                 }
 
+            })
+        compositeDisposable.add(disposable)
+    }
+
+    fun removeContent(content: Content) {
+        val disposable = contentRepository.removeContent(content)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableCompletableObserver() {
+                override fun onComplete() {
+                    removeContentObservable.onComplete()
+                }
+
+                override fun onError(e: Throwable) {
+                    removeContentErrorObservable.onNext(e as Exception)
+                }
             })
         compositeDisposable.add(disposable)
     }

@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.content_item.view.*
 //Make the class extend RecyclerView.ViewHolder, allowing the adapter to use it as as a ViewHolder
 class ContentAdapter() : RecyclerView.Adapter<ContentAdapter.ContentHolder>() {
     lateinit var clickListener: AdapterActionListener
-    var contents: List<Content> = arrayListOf()
+    var contents: ArrayList<Content> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentAdapter.ContentHolder {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.content_item, parent, false)
@@ -24,13 +24,18 @@ class ContentAdapter() : RecyclerView.Adapter<ContentAdapter.ContentHolder>() {
         holder.bindContent(contents[position], clickListener, position)
     }
 
-    fun updateList(contentList: List<Content>) {
+    fun updateList(contentList: ArrayList<Content>) {
         contents = contentList
 
     }
 
     fun setItemClickListener(clickListener: AdapterActionListener) {
         this.clickListener = clickListener
+    }
+
+    fun removeItem(position: Int) {
+        contents.removeAt(position)
+        notifyItemRemoved(position)
     }
 
     class ContentHolder(v: View) : RecyclerView.ViewHolder(v) {

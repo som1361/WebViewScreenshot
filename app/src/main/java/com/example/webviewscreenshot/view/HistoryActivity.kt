@@ -38,7 +38,7 @@ class HistoryActivity : AppCompatActivity() {
         })
     }
 
-    private fun updateContentList(it: List<Content>?) {
+    private fun updateContentList(it: ArrayList<Content>?) {
         if (it != null) {
             mContentAdapter.updateList(it)
             mContentAdapter.notifyDataSetChanged()
@@ -52,7 +52,8 @@ class HistoryActivity : AppCompatActivity() {
                 position: Int,
                 content: Content
             ) {
-
+                 mContentAdapter.removeItem(position)
+                 mMainViewModel.removeContent(content)
             }
 
             override fun doWhenItemUrlIsClicked(content: Content) = gotoMainActivity(content)
@@ -80,7 +81,7 @@ class HistoryActivity : AppCompatActivity() {
      val bundle = Bundle()
         bundle.putString(MainActivity.Constants.IMAGE_REF, content.imageRef)
         bundle.putString(MainActivity.Constants.URL, content.url)
-        val intent = Intent()
+        val intent = Intent(this, MainActivity::class.java)
         intent.putExtras(bundle)
         startActivity(intent)
     }

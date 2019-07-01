@@ -13,7 +13,7 @@ val COL_DATETIME = "datetime"
 
 
 class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
-    private var contentList: MutableList<Content> = ArrayList()
+    private var contentList: ArrayList<Content> = ArrayList()
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable =
             "CREATE TABLE $TABLE_NAME($COL_URL VARCHAR(256), $COL_IMAGE_REF VARCHAR(256), $COL_DATETIME VARCHAR(256));"
@@ -35,7 +35,7 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
         return db.insert(TABLE_NAME, null, contentValues)
     }
 
-    fun getContentList(): List<Content>? {
+    fun getContentList(): ArrayList<Content>? {
         val db = this.readableDatabase
         val query = "SELECT * FROM $TABLE_NAME;"
         val result = db.rawQuery(query, null)
@@ -54,4 +54,14 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
 
         return contentList
     }
+
+    fun removeContent(content: Content): Int? {
+        val db = this.writableDatabase
+        var contentValues = ContentValues()
+        contentValues.put(COL_IMAGE_REF, content.imageRef)
+        contentValues.put(COL_URL, content.url)
+        contentValues.put(COL_DATETIME, content.dateTime)
+
+        return db.delete(TABLE_NAME, "$COL_URL = ${content.url}  and $COL_DATETIME = ${content.url}" , null)
     }
+}
