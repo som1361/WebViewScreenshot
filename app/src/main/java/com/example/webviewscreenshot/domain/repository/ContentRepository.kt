@@ -9,4 +9,5 @@ interface ContentRepository {
     fun addContent(content: Content): Completable
     fun getContentList(): Single<ArrayList<Content>>
     fun removeContent(content: Content): Completable
+    fun getContentsByUrl(url: String): Single<ArrayList<Content>>
 }

@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.provider.BaseColumns
 
 val DB_NAME = "Urls"
 val TABLE_NAME = "UrlDetails"
@@ -14,7 +13,6 @@ val COL_DATETIME = "datetime"
 
 
 class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
-    private var contentList: ArrayList<Content> = ArrayList()
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable =
             "CREATE TABLE $TABLE_NAME($COL_URL VARCHAR(256), $COL_IMAGE_REF VARCHAR(256), $COL_DATETIME VARCHAR(256));"
@@ -37,18 +35,21 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
     }
 
     fun getContentList(): ArrayList<Content>? {
+        var contentList: ArrayList<Content> = ArrayList()
         val db = this.readableDatabase
         val query = "SELECT * FROM $TABLE_NAME;"
         val result = db.rawQuery(query, null)
-        result.moveToFirst()
-        do{
-            var content = Content()
-            content.imageRef = result.getString(result.getColumnIndex(COL_IMAGE_REF))
-            content.url = result.getString(result.getColumnIndex(COL_URL))
-            content.dateTime = result.getString(result.getColumnIndex(COL_DATETIME))
+        if (result.count > 0) {
+            result.moveToFirst()
+            do {
+                var content = Content()
+                content.imageRef = result.getString(result.getColumnIndex(COL_IMAGE_REF))
+                content.url = result.getString(result.getColumnIndex(COL_URL))
+                content.dateTime = result.getString(result.getColumnIndex(COL_DATETIME))
 
-            contentList.add(content)
-        }while(result.moveToNext())
+                contentList.add(content)
+            } while (result.moveToNext())
+        }
 
         result.close()
         db.close()
@@ -56,8 +57,31 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
         return contentList
     }
 
+    fun getContentsByUrl(url: String): ArrayList<Content>? {
+        var contentList: ArrayList<Content> = ArrayList()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME WHERE $COL_URL = '$url';"
+        val result = db.rawQuery(query, null)
+        if (result.count > 0) {
+            result.moveToFirst()
+            do {
+                var content = Content()
+                content.imageRef = result.getString(result.getColumnIndex(COL_IMAGE_REF))
+                content.url = result.getString(result.getColumnIndex(COL_URL))
+                content.dateTime = result.getString(result.getColumnIndex(COL_DATETIME))
+
+                contentList.add(content)
+            } while (result.moveToNext())
+        }
+
+        result?.close()
+        db.close()
+
+        return contentList
+    }
+
     fun removeContent(content: Content): Int? {
         val db = this.writableDatabase
-        return db.delete(TABLE_NAME, COL_URL +"=? AND " + COL_DATETIME + "=?", arrayOf(content.url, content.dateTime))
+        return db.delete(TABLE_NAME, COL_URL + "=? AND " + COL_DATETIME + "=?", arrayOf(content.url, content.dateTime))
     }
 }

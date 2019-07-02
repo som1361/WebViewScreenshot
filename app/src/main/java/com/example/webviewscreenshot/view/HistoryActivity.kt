@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MotionEvent
+import android.view.View
 import com.example.webviewscreenshot.R
 import com.example.webviewscreenshot.domain.model.Content
 import com.example.webviewscreenshot.domain.model.ContentDao
@@ -11,7 +13,6 @@ import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_history.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 class HistoryActivity : AppCompatActivity() {
     private lateinit var mMainViewModel: MainViewModel
@@ -31,9 +32,21 @@ class HistoryActivity : AppCompatActivity() {
     private fun listenToObservables() {
         mMainViewModel.getContentObservable.subscribe({
             history_progress_bar.hide()
+            if (it.size == 0)
+                showSuccessMessage(this, R.string.empty_list)
             updateContentList(it)
         })
         mMainViewModel.getContentErrorObservable.subscribe({
+            history_progress_bar.hide()
+            showFailMessage(this, R.string.get_history_failed)
+        })
+        mMainViewModel.getContentByUrlObservable.subscribe({
+            history_progress_bar.hide()
+            if (it.size == 0)
+                showSuccessMessage(this, R.string.empty_list)
+            updateContentList(it)
+        })
+        mMainViewModel.getContentByUrlErrorObservable.subscribe({
             history_progress_bar.hide()
             showFailMessage(this, R.string.get_history_failed)
         })
@@ -74,6 +87,24 @@ class HistoryActivity : AppCompatActivity() {
             override fun doWhenItemUrlIsClicked(content: Content) = gotoMainActivity(content)
             override fun doWhenItemImageIsClicked(content: Content) = gotoMainActivity(content)
         })
+
+        search_imageView.setOnClickListener {
+            val url = url_search_editText.text.toString()
+            if (!url.isValidUrl())
+                showFailMessage(this, R.string.invalid_url)
+            else {
+                val res = url.formatUrl()
+                url_search_editText.setText(res)
+                mMainViewModel.getHistoryByUrl(res)
+            }
+        }
+
+        history_layout.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                this@HistoryActivity.hideSoftKeyboard()
+                return true
+            }
+        })
     }
 
     private fun loadView() {
@@ -88,7 +119,7 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun gotoMainActivity(content: Content) {
-     val bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString(MainActivity.Constants.URL, content.url)
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtras(bundle)

@@ -49,13 +49,7 @@ class MainActivity : AppCompatActivity() {
                 showFailMessage(this, R.string.invalid_url)
             else {
                 var url = url_edittext.text.toString()
-                if (!url.startsWith("www.") && !url.startsWith("http://") && !url.startsWith("https://")) {
-                    url = "www." + url;
-                }
-                if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                    url = "http://" + url;
-                }
-                url_edittext.setText(url)
+                url_edittext.setText(url.formatUrl())
                 loadContent(url)
             }
         }

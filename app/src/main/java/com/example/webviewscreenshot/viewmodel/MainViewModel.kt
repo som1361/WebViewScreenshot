@@ -31,6 +31,8 @@ class MainViewModel() {
     lateinit var removeContentErrorObservable: PublishSubject<Exception>
     lateinit var getContentObservable: PublishSubject<ArrayList<Content>>
     lateinit var getContentErrorObservable: PublishSubject<Exception>
+    lateinit var getContentByUrlObservable: PublishSubject<ArrayList<Content>>
+    lateinit var getContentByUrlErrorObservable: PublishSubject<Exception>
 
     constructor(mContentRepository: ContentRepository) : this() {
         contentRepository = mContentRepository
@@ -40,6 +42,8 @@ class MainViewModel() {
         removeContentErrorObservable = PublishSubject.create()
         getContentObservable = PublishSubject.create()
         getContentErrorObservable = PublishSubject.create()
+        getContentByUrlObservable = PublishSubject.create()
+        getContentByUrlErrorObservable = PublishSubject.create()
     }
 
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -92,6 +96,23 @@ class MainViewModel() {
 
                 override fun onError(e: Throwable) {
                     getContentErrorObservable.onNext(e as Exception)
+                }
+
+            })
+        compositeDisposable.add(disposable)
+    }
+
+    fun getHistoryByUrl(url:String) {
+        val disposable: Disposable = contentRepository.getContentsByUrl(url)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableSingleObserver<ArrayList<Content>>(){
+                override fun onSuccess(t: ArrayList<Content>) {
+                    getContentByUrlObservable.onNext(t)
+                }
+
+                override fun onError(e: Throwable) {
+                    getContentByUrlErrorObservable.onNext(e as Exception)
                 }
 
             })

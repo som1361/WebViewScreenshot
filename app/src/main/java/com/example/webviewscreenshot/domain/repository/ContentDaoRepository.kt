@@ -7,6 +7,8 @@ import io.reactivex.Single
 import java.util.ArrayList
 
 class ContentDaoRepository(private val contentDao: ContentDao) : ContentRepository {
+    override fun getContentsByUrl(url: String): Single<ArrayList<Content>> = Single.fromCallable({contentDao.getContentsByUrl(url)})
+
     override fun getContentList(): Single<ArrayList<Content>> = Single.fromCallable({contentDao.getContentList()})
 
     override fun addContent(content: Content): Completable = Completable.fromCallable { contentDao.addContent(content) }
