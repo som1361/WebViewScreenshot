@@ -13,6 +13,7 @@ import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
+import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -45,12 +46,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun respondToClicks() {
         go_button.setOnClickListener {
-            if (!isValidUrl())
+            val url = url_edittext.text.toString()
+            if (!url.isValidUrl())
                 showFailMessage(this, R.string.invalid_url)
             else {
-                var url = url_edittext.text.toString()
-                url_edittext.setText(url.formatUrl())
-                loadContent(url)
+                val res = url.formatUrl()
+                url_edittext.setText(res)
+                loadContent(res)
             }
         }
         capture_button.setOnClickListener {
@@ -112,9 +114,6 @@ class MainActivity : AppCompatActivity() {
         })
         content_webview.loadUrl(url)
     }
-
-    // url validation process
-    private fun isValidUrl() = url_edittext.text.toString().isValidUrl()
 
     override fun onStop() {
         super.onStop()

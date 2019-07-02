@@ -6,6 +6,7 @@ import android.support.annotation.RequiresApi
 import android.view.View
 import com.example.webviewscreenshot.domain.model.Content
 import com.example.webviewscreenshot.domain.repository.ContentRepository
+import com.example.webviewscreenshot.utils.getCurrentTime
 import com.example.webviewscreenshot.utils.loadBitmap
 import com.example.webviewscreenshot.utils.saveToInternalStorage
 import io.reactivex.Observable
@@ -61,7 +62,7 @@ class MainViewModel() {
             .subscribe(object : Consumer<String> {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun accept(savedImageAbsPath: String?) {
-                    val content = Content(savedImageAbsPath, url, LocalDateTime.now().toString())
+                    val content = Content(savedImageAbsPath, url, getCurrentTime())
                     saveContent(content)
                 }
 

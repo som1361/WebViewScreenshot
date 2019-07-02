@@ -51,7 +51,7 @@ class ContentAdapter() : RecyclerView.Adapter<ContentAdapter.ContentHolder>() {
         ) {
             this.content = content
             Glide.with(view.context).load(content.imageRef).into(view.item_image)
-            view.item_time.text = content.dateTime.toString()
+            view.item_time.text = content.timestamp.toString()
             view.item_url.text = content.url
             view.item_delete_button.setOnClickListener {
                 clickListener.doWhenDeleteItemIsClicked(position, content)

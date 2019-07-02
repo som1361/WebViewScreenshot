@@ -14,7 +14,7 @@
             android:layout_width="0dp"
             android:inputType="textWebEmailAddress"
             android:layout_height="wrap_content"
-            android:s="10"
+            android:ems="10"
             android:id="@+id/url_edittext" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="8dp"

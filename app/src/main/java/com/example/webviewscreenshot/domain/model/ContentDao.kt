@@ -9,13 +9,13 @@ val DB_NAME = "Urls"
 val TABLE_NAME = "UrlDetails"
 val COL_URL = "url"
 val COL_IMAGE_REF = "image"
-val COL_DATETIME = "datetime"
+val COL_TIMESTAMP = "timestamp"
 
 
 class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable =
-            "CREATE TABLE $TABLE_NAME($COL_URL VARCHAR(256), $COL_IMAGE_REF VARCHAR(256), $COL_DATETIME VARCHAR(256));"
+            "CREATE TABLE $TABLE_NAME($COL_URL VARCHAR(256), $COL_IMAGE_REF VARCHAR(256), $COL_TIMESTAMP VARCHAR(256));"
         db?.execSQL(createTable)
         val createIndex = "CREATE INDEX ${TABLE_NAME}_${COL_URL} ON $TABLE_NAME ($COL_URL);"
         db?.execSQL(createIndex)
@@ -29,8 +29,7 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
         var contentValues = ContentValues()
         contentValues.put(COL_IMAGE_REF, content.imageRef)
         contentValues.put(COL_URL, content.url)
-        contentValues.put(COL_DATETIME, content.dateTime)
-
+        contentValues.put(COL_TIMESTAMP, content.timestamp)
         return db.insert(TABLE_NAME, null, contentValues)
     }
 
@@ -45,7 +44,7 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
                 var content = Content()
                 content.imageRef = result.getString(result.getColumnIndex(COL_IMAGE_REF))
                 content.url = result.getString(result.getColumnIndex(COL_URL))
-                content.dateTime = result.getString(result.getColumnIndex(COL_DATETIME))
+                content.timestamp = result.getString(result.getColumnIndex(COL_TIMESTAMP))
 
                 contentList.add(content)
             } while (result.moveToNext())
@@ -68,7 +67,7 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
                 var content = Content()
                 content.imageRef = result.getString(result.getColumnIndex(COL_IMAGE_REF))
                 content.url = result.getString(result.getColumnIndex(COL_URL))
-                content.dateTime = result.getString(result.getColumnIndex(COL_DATETIME))
+                content.timestamp = result.getString(result.getColumnIndex(COL_TIMESTAMP))
 
                 contentList.add(content)
             } while (result.moveToNext())
@@ -82,6 +81,10 @@ class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1)
 
     fun removeContent(content: Content): Int? {
         val db = this.writableDatabase
-        return db.delete(TABLE_NAME, COL_URL + "=? AND " + COL_DATETIME + "=?", arrayOf(content.url, content.dateTime))
+        return db.delete(
+            TABLE_NAME,
+            COL_URL + "=? AND " + COL_TIMESTAMP + "=?",
+            arrayOf(content.url, content.timestamp)
+        )
     }
 }

@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Returns the absolute pathName to the saved Bitmap file
@@ -23,4 +25,6 @@ fun saveToInternalStorage(
 fun removeFromInternalStorage(filePath:String) {
     File(filePath).delete()
 }
+
+fun getCurrentTime(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 

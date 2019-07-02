@@ -13,8 +13,8 @@
 
     <EditText
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:inputType="textWebEmailAddress"
+            android:layout_height="wrap_content"
             android:ems="10"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/url_search_editText" app:layout_constraintHorizontal_bias="0.5"
