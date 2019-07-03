@@ -28,18 +28,6 @@ class SQLiteDBTest {
 
     @Test
     fun getContentListTest() = readableDatabaseTest {
-
-    }
-
-    @Test
-    fun addContentTest() = writableDatabaseTest {
-        val content = Content("/data/data/screenshotapp/app_data/1", "https://www.google.com", "2019-07-01 12:30:00")
-        contentDao!!.addContent(content)
-        assertTrue(contentDao!!.getContentList()!!.contains(content))
-    }
-
-    @Test
-    fun getContentsByUrlTest() = readableDatabaseTest {
         var contentList: ArrayList<Content> = ArrayList()
         var content = Content(
             "/data/data/screenshotapp/app_data/1",
@@ -56,6 +44,24 @@ class SQLiteDBTest {
         contentList.add(content)
         contentDao!!.addContent(content)
         assertTrue(contentDao!!.getContentList()!!.containsAll(contentList))
+    }
+
+    @Test
+    fun addContentTest() = writableDatabaseTest {
+        val content = Content("/data/data/screenshotapp/app_data/1", "https://www.google.com", "2019-07-01 12:30:00")
+        contentDao!!.addContent(content)
+        assertTrue(contentDao!!.getContentList()!!.contains(content))
+    }
+
+    @Test
+    fun getContentsByUrlTest() = readableDatabaseTest {
+        var content = Content(
+            "/data/data/screenshotapp/app_data/7",
+            "https://www.ebay.com",
+            "2019-07-01 12:30:00"
+        )
+        contentDao!!.addContent(content)
+        assertTrue(content.url?.let { contentDao!!.getContentsByUrl(it) }!!.contains(content))
     }
 
     @Test
