@@ -2,29 +2,13 @@ package com.example.webviewscreenshot.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.view.Gravity
-import android.widget.Toast
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
-fun showSuccessMessage(context: Context, message: Int) {
-    val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
-    toast.view.setBackgroundColor(Color.GRAY)
-    toast.setGravity(Gravity.BOTTOM, 0, 0);
-    toast.show()
-}
 
-fun showFailMessage(context: Context, message: Int) {
-    val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
-    toast.view.setBackgroundColor(Color.RED)
-    toast.setGravity(Gravity.BOTTOM, 0, 0);
-    toast.show()
-}
-
-/**
- * Returns the absolute pathName to the saved Bitmap file
- */
+ // Returns the absolute pathName to the saved Bitmap file
 fun saveToInternalStorage(
     context: Context, bitmap: Bitmap, dirName: String,
     fileName: String
@@ -36,4 +20,10 @@ fun saveToInternalStorage(
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
     return pathName.getAbsolutePath()
 }
+
+fun removeFromInternalStorage(filePath:String) {
+    File(filePath).delete()
+}
+
+fun getCurrentTime(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 

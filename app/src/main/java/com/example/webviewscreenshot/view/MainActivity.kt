@@ -1,5 +1,6 @@
 package com.example.webviewscreenshot.view
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -27,21 +28,43 @@ class MainActivity : AppCompatActivity() {
     private fun loadView() {
         setContentView(R.layout.activity_main)
     }
+//entry point for singleTask activity
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val bundle = intent!!.extras
+        if (bundle != null) {
+            updateViewContents(bundle.getString(Constants.URL))
+        }
+    }
+
+    private fun updateViewContents(url: String?) {
+        url_edittext.setText(url)
+        loadContent(url!!)
+
+    }
 
     private fun respondToClicks() {
         go_button.setOnClickListener {
-            if (!isValidUrl())
+            val url = url_edittext.text.toString()
+            if (!url.isValidUrl())
                 showFailMessage(this, R.string.invalid_url)
-            else
-                loadContent(url_edittext.text.toString())
+            else {
+                val res = url.formatUrl()
+                url_edittext.setText(res)
+                loadContent(res)
+            }
         }
         capture_button.setOnClickListener {
             listenToObservables()
-            mMainViewModel.doWhenCaptureButtonIsClicked(
+            mMainViewModel.captureContent(
                 applicationContext,
                 content_webview,
                 url_edittext.text.toString()
             )
+        }
+
+        history_button.setOnClickListener {
+            goToHistoryActivity()
         }
 
 //hide soft keyboard after clicking outside Url edittext
@@ -51,6 +74,11 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    private fun goToHistoryActivity() {
+        val intent = Intent(this, HistoryActivity::class.java)
+        startActivity(intent)
     }
 
     private fun listenToObservables() {
@@ -86,6 +114,12 @@ class MainActivity : AppCompatActivity() {
         content_webview.loadUrl(url)
     }
 
-    // url validation process
-    private fun isValidUrl() = url_edittext.text.toString().isValidUrl()
+    override fun onStop() {
+        super.onStop()
+        mMainViewModel.cancelDBConnection()
+    }
+
+    object Constants {
+        const val URL = "url"
+    }
 }
