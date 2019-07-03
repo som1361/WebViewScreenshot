@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import com.example.webviewscreenshot.R
@@ -14,11 +15,9 @@ import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_history.*
-import javax.inject.Inject
 
 class HistoryActivity : AppCompatActivity() {
-   // private lateinit var mMainViewModel: MainViewModel
-   @Inject lateinit var mMainViewModel: MainViewModel
+    private lateinit var mMainViewModel: MainViewModel
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private lateinit var mContentAdapter: ContentAdapter
     private var itemPosition: Int = 0
@@ -26,8 +25,7 @@ class HistoryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (application as ScreenshotApplication).screenShotComponent.inject(this)
-      //  mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
+        mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
         loadView()
         respondToClicks()
         listenToObservables()
@@ -113,6 +111,7 @@ class HistoryActivity : AppCompatActivity() {
 
     private fun loadView() {
         setContentView(R.layout.activity_history)
+        getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true)
         mContentAdapter = ContentAdapter()
         mLinearLayoutManager = LinearLayoutManager(this)
         history_recyclerview.layoutManager = mLinearLayoutManager
@@ -120,6 +119,11 @@ class HistoryActivity : AppCompatActivity() {
         history_progress_bar.hide()
         history_progress_bar.show()
         mMainViewModel.getHistory()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun gotoMainActivity(content: Content) {

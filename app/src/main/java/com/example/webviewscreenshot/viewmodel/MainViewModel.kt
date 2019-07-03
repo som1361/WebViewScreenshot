@@ -19,10 +19,13 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.PublishSubject
-import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.Callable
+import javax.inject.Inject
+import javax.inject.Named
 import kotlin.collections.ArrayList
+import com.example.webviewscreenshot.application.ScreenshotApplication
+
 
 class MainViewModel() {
     private lateinit var contentRepository: ContentRepository
@@ -35,17 +38,18 @@ class MainViewModel() {
     lateinit var getContentByUrlObservable: PublishSubject<ArrayList<Content>>
     lateinit var getContentByUrlErrorObservable: PublishSubject<Exception>
 
-    constructor(mContentRepository: ContentRepository) : this() {
+   constructor(mContentRepository: ContentRepository) : this() {
         contentRepository = mContentRepository
-        saveContentObservable = CompletableSubject.create()
-        saveContentErrorObservable = PublishSubject.create()
-        removeContentObservable = CompletableSubject.create()
-        removeContentErrorObservable = PublishSubject.create()
-        getContentObservable = PublishSubject.create()
-        getContentErrorObservable = PublishSubject.create()
-        getContentByUrlObservable = PublishSubject.create()
-        getContentByUrlErrorObservable = PublishSubject.create()
-    }
+       saveContentObservable = CompletableSubject.create()
+       saveContentErrorObservable = PublishSubject.create()
+       removeContentObservable = CompletableSubject.create()
+       removeContentErrorObservable = PublishSubject.create()
+       getContentObservable = PublishSubject.create()
+       getContentErrorObservable = PublishSubject.create()
+       getContentByUrlObservable = PublishSubject.create()
+       getContentByUrlErrorObservable = PublishSubject.create()
+
+   }
 
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -138,5 +142,16 @@ class MainViewModel() {
 
     fun cancelDBConnection() {
         compositeDisposable.clear()
+    }
+
+    companion object{
+        const val SAVE_CONTENT_OBSERVABLE = "saveContentObservable"
+        const val REMOVE_CONTENT_OBSERVABLE = "removeContentObservable"
+        const val SAVE_CONTENT_ERROR_OBSERVABLE = "saveContentErrorObservable"
+        const val GET_CONTENT_ERROR_OBSERVABLE = "getContentErrorObservable"
+        const val GET_CONTENT_BY_URL_ERROR_OBSERVABLE = "getContentByUrlErrorObservable"
+        const val REMOVE_CONTENT_ERROR_OBSERVABLE = "removeContentErrorObservable"
+        const val GET_CONTENT_OBSERVABLE = "getContentObservable"
+        const val GET_CONTENT_BY_URL_OBSERVABLE = "getContentByUrlObservable"
     }
 }

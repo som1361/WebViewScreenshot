@@ -8,8 +8,7 @@ import javax.inject.Singleton
 
 @Module
 class ViewModelModule {
-
     @Provides
     @Singleton
-    fun providesMainViewModel(contentRepository: ContentRepository) = MainViewModel(contentRepository)
+    fun providesViewModel(contentRepository: ContentRepository) = MainViewModel(contentRepository)
 }
