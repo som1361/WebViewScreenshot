@@ -2,14 +2,12 @@ package com.example.webviewscreenshot.DI
 
 import com.example.webviewscreenshot.DI.Scope.AppScope
 import com.example.webviewscreenshot.domain.model.Content
-import com.example.webviewscreenshot.domain.repository.ContentRepository
 import com.example.webviewscreenshot.view.HistoryActivity
 import com.example.webviewscreenshot.view.MainActivity
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import dagger.Component
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.PublishSubject
-import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 

@@ -21,10 +21,7 @@ import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 import java.util.concurrent.Callable
-import javax.inject.Inject
-import javax.inject.Named
 import kotlin.collections.ArrayList
-import com.example.webviewscreenshot.application.ScreenshotApplication
 
 
 class MainViewModel() {
@@ -48,12 +45,12 @@ class MainViewModel() {
        getContentErrorObservable = PublishSubject.create()
        getContentByUrlObservable = PublishSubject.create()
        getContentByUrlErrorObservable = PublishSubject.create()
-
    }
 
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    fun doWhenCaptureButtonIsClicked(context: Context, view: View, url: String) {
+    fun captureContent(context: Context, view: View, url: String) {
+        // save captured data in internal storage
         val disposable = Observable.fromCallable(object : Callable<String> {
             override fun call(): String {
                 return saveToInternalStorage(
@@ -67,6 +64,7 @@ class MainViewModel() {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun accept(savedImageAbsPath: String?) {
                     val content = Content(savedImageAbsPath, url, getCurrentTime())
+                    //save url data in database
                     saveContent(content)
                 }
 

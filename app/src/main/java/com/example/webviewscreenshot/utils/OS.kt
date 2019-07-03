@@ -7,9 +7,8 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Returns the absolute pathName to the saved Bitmap file
- */
+
+ // Returns the absolute pathName to the saved Bitmap file
 fun saveToInternalStorage(
     context: Context, bitmap: Bitmap, dirName: String,
     fileName: String

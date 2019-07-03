@@ -9,7 +9,6 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.webviewscreenshot.R
-import com.example.webviewscreenshot.application.ScreenshotApplication
 import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadView() {
         setContentView(R.layout.activity_main)
     }
-
+//entry point for singleTask activity
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         val bundle = intent!!.extras
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         }
         capture_button.setOnClickListener {
             listenToObservables()
-            mMainViewModel.doWhenCaptureButtonIsClicked(
+            mMainViewModel.captureContent(
                 applicationContext,
                 content_webview,
                 url_edittext.text.toString()

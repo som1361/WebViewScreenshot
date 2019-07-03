@@ -8,8 +8,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.graphics.Canvas
-import kotlinx.android.synthetic.main.activity_main.*
-
 
 fun String.isValidUrl(): Boolean
         = this.isNotEmpty() &&
@@ -42,7 +40,6 @@ fun ProgressBar.hide(){
 fun View.loadBitmap(): Bitmap {
     val b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val c = Canvas(b)
-//    layout(0, 0, layoutParams.width, layoutParams.height)
     draw(c)
     return b
 }

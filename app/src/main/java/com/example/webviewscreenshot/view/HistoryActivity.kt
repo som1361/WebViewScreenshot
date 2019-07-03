@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import com.example.webviewscreenshot.R
-import com.example.webviewscreenshot.application.ScreenshotApplication
 import com.example.webviewscreenshot.domain.model.Content
 import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
