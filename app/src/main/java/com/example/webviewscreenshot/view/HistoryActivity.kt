@@ -7,15 +7,18 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.MotionEvent
 import android.view.View
 import com.example.webviewscreenshot.R
+import com.example.webviewscreenshot.application.ScreenshotApplication
 import com.example.webviewscreenshot.domain.model.Content
 import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_history.*
+import javax.inject.Inject
 
 class HistoryActivity : AppCompatActivity() {
-    private lateinit var mMainViewModel: MainViewModel
+   // private lateinit var mMainViewModel: MainViewModel
+   @Inject lateinit var mMainViewModel: MainViewModel
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private lateinit var mContentAdapter: ContentAdapter
     private var itemPosition: Int = 0
@@ -23,7 +26,8 @@ class HistoryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
+        (application as ScreenshotApplication).screenShotComponent.inject(this)
+      //  mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
         loadView()
         respondToClicks()
         listenToObservables()

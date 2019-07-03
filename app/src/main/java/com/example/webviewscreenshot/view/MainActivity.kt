@@ -9,18 +9,23 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.webviewscreenshot.R
+import com.example.webviewscreenshot.application.ScreenshotApplication
 import com.example.webviewscreenshot.domain.model.ContentDao
 import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mMainViewModel: MainViewModel
+    @Inject lateinit var mMainViewModel: MainViewModel
+  //  private lateinit var mMainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
+
+       // mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
+        (application as ScreenshotApplication).screenShotComponent.inject(this)
         super.onCreate(savedInstanceState)
         loadView()
         respondToClicks()

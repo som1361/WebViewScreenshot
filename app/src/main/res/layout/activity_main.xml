@@ -12,7 +12,6 @@
 
     <EditText
             android:layout_width="0dp"
-            android:inputType="textWebEmailAddress"
             android:layout_height="wrap_content"
             android:ems="10"
             android:id="@+id/url_edittext" app:layout_constraintEnd_toEndOf="parent"

@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import javax.inject.Inject
+import javax.inject.Singleton
 
 val DB_NAME = "Urls"
 val TABLE_NAME = "UrlDetails"
@@ -11,8 +13,9 @@ val COL_URL = "url"
 val COL_IMAGE_REF = "image"
 val COL_TIMESTAMP = "timestamp"
 
+@Singleton
+class ContentDao @Inject constructor(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
 
-class ContentDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable =
             "CREATE TABLE $TABLE_NAME($COL_URL VARCHAR(256), $COL_IMAGE_REF VARCHAR(256), $COL_TIMESTAMP VARCHAR(256));"
