@@ -8,18 +8,28 @@ import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.example.webviewscreenshot.DI.component.ActivityComponent
+import com.example.webviewscreenshot.DI.component.DaggerActivityComponent
+import com.example.webviewscreenshot.DI.module.ActivityModule
 import com.example.webviewscreenshot.R
-import com.example.webviewscreenshot.domain.model.ContentDao
-import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
+import com.example.webviewscreenshot.application.ScreenshotApplication
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mMainViewModel: MainViewModel
+    @Inject lateinit var mMainViewModel: MainViewModel
+    lateinit var activityComponent: ActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
+        activityComponent = DaggerActivityComponent
+            .builder()
+            .appComponent((application as ScreenshotApplication).screenShotComponent)
+            .activityModule(ActivityModule(this))
+            .build()
+        activityComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         loadView()
         respondToClicks()
@@ -28,7 +38,8 @@ class MainActivity : AppCompatActivity() {
     private fun loadView() {
         setContentView(R.layout.activity_main)
     }
-//entry point for singleTask activity
+
+    //entry point for singleTask activity
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         val bundle = intent!!.extras
@@ -82,12 +93,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listenToObservables() {
-        mMainViewModel.saveContentObservable.subscribe({
+        ScreenshotApplication.getAsyncComponent().getSaveContentObservable().subscribe({
             main_progress_bar.hide()
             showSuccessMessage(this, R.string.save_content_success)
         })
 
-        mMainViewModel.saveContentErrorObservable.subscribe({
+        ScreenshotApplication.getAsyncComponent().getSaveContentErrorObservable().subscribe({
             showFailMessage(this, R.string.save_content_failed)
         })
     }

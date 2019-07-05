@@ -7,7 +7,7 @@ import io.reactivex.Single
 import java.util.ArrayList
 import javax.inject.Inject
 
-class ContentDaoRepository @Inject constructor(val contentDao: ContentDao) : ContentRepository {
+class ContentDaoRepository @Inject constructor(private val contentDao: ContentDao) : ContentRepository {
     override fun getContentsByUrl(url: String): Single<ArrayList<Content>> = Single.fromCallable({contentDao.getContentsByUrl(url)})
 
     override fun getContentList(): Single<ArrayList<Content>> = Single.fromCallable({contentDao.getContentList()})
@@ -15,13 +15,4 @@ class ContentDaoRepository @Inject constructor(val contentDao: ContentDao) : Con
     override fun addContent(content: Content): Completable = Completable.fromCallable { contentDao.addContent(content) }
 
     override fun removeContent(content: Content): Completable = Completable.fromCallable { contentDao.removeContent(content) }
-
-    companion object {
-        @Volatile
-        private var instance: ContentDaoRepository? = null
-
-        fun getInstance(contentDao: ContentDao) = instance ?: synchronized(this) {
-            instance ?: ContentDaoRepository(contentDao).also { instance = it }
-        }
-    }
 }

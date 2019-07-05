@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.view.View
+import com.example.webviewscreenshot.application.ScreenshotApplication
 import com.example.webviewscreenshot.domain.model.Content
 import com.example.webviewscreenshot.domain.repository.ContentRepository
 import com.example.webviewscreenshot.utils.getCurrentTime
@@ -17,35 +18,12 @@ import io.reactivex.functions.Consumer
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.CompletableSubject
-import io.reactivex.subjects.PublishSubject
 import java.util.*
 import java.util.concurrent.Callable
-import kotlin.collections.ArrayList
+import javax.inject.Inject
 
 
-class MainViewModel() {
-    private lateinit var contentRepository: ContentRepository
-    lateinit var saveContentObservable: CompletableSubject
-    lateinit var saveContentErrorObservable: PublishSubject<Exception>
-    lateinit var removeContentObservable: CompletableSubject
-    lateinit var removeContentErrorObservable: PublishSubject<Exception>
-    lateinit var getContentObservable: PublishSubject<ArrayList<Content>>
-    lateinit var getContentErrorObservable: PublishSubject<Exception>
-    lateinit var getContentByUrlObservable: PublishSubject<ArrayList<Content>>
-    lateinit var getContentByUrlErrorObservable: PublishSubject<Exception>
-
-   constructor(mContentRepository: ContentRepository) : this() {
-        contentRepository = mContentRepository
-       saveContentObservable = CompletableSubject.create()
-       saveContentErrorObservable = PublishSubject.create()
-       removeContentObservable = CompletableSubject.create()
-       removeContentErrorObservable = PublishSubject.create()
-       getContentObservable = PublishSubject.create()
-       getContentErrorObservable = PublishSubject.create()
-       getContentByUrlObservable = PublishSubject.create()
-       getContentByUrlErrorObservable = PublishSubject.create()
-   }
+class MainViewModel @Inject constructor(private var contentRepository: ContentRepository) {
 
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -78,11 +56,11 @@ class MainViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableCompletableObserver() {
                 override fun onComplete() {
-                    saveContentObservable.onComplete()
+                    ScreenshotApplication.getAsyncComponent().getSaveContentObservable().onComplete()
                 }
 
                 override fun onError(e: Throwable) {
-                    saveContentErrorObservable.onNext(e as Exception)
+                    ScreenshotApplication.getAsyncComponent().getSaveContentErrorObservable().onNext(e as Exception)
                 }
             })
         compositeDisposable.add(disposable)
@@ -92,30 +70,30 @@ class MainViewModel() {
         val disposable: Disposable = contentRepository.getContentList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<ArrayList<Content>>(){
+            .subscribeWith(object : DisposableSingleObserver<ArrayList<Content>>() {
                 override fun onSuccess(t: ArrayList<Content>) {
-                    getContentObservable.onNext(t)
+                    ScreenshotApplication.getAsyncComponent().getGetContentObservable().onNext(t)
                 }
 
                 override fun onError(e: Throwable) {
-                    getContentErrorObservable.onNext(e as Exception)
+                    ScreenshotApplication.getAsyncComponent().getGetContentErrorObservable().onNext(e as Exception)
                 }
 
             })
         compositeDisposable.add(disposable)
     }
 
-    fun getHistoryByUrl(url:String) {
+    fun getHistoryByUrl(url: String) {
         val disposable: Disposable = contentRepository.getContentsByUrl(url)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<ArrayList<Content>>(){
+            .subscribeWith(object : DisposableSingleObserver<ArrayList<Content>>() {
                 override fun onSuccess(t: ArrayList<Content>) {
-                    getContentByUrlObservable.onNext(t)
+                    ScreenshotApplication.getAsyncComponent().getGetContentByUrlObservable().onNext(t)
                 }
 
                 override fun onError(e: Throwable) {
-                    getContentByUrlErrorObservable.onNext(e as Exception)
+                    ScreenshotApplication.getAsyncComponent().getGetContentByUrlErrorObservable().onNext(e as Exception)
                 }
 
             })
@@ -128,11 +106,11 @@ class MainViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableCompletableObserver() {
                 override fun onComplete() {
-                    removeContentObservable.onComplete()
+                    ScreenshotApplication.getAsyncComponent().getRemoveContentObservable().onComplete()
                 }
 
                 override fun onError(e: Throwable) {
-                    removeContentErrorObservable.onNext(e as Exception)
+                    ScreenshotApplication.getAsyncComponent().getRemoveContentErrorObservable().onNext(e as Exception)
                 }
             })
         compositeDisposable.add(disposable)
@@ -140,16 +118,5 @@ class MainViewModel() {
 
     fun cancelDBConnection() {
         compositeDisposable.clear()
-    }
-
-    companion object{
-        const val SAVE_CONTENT_OBSERVABLE = "saveContentObservable"
-        const val REMOVE_CONTENT_OBSERVABLE = "removeContentObservable"
-        const val SAVE_CONTENT_ERROR_OBSERVABLE = "saveContentErrorObservable"
-        const val GET_CONTENT_ERROR_OBSERVABLE = "getContentErrorObservable"
-        const val GET_CONTENT_BY_URL_ERROR_OBSERVABLE = "getContentByUrlErrorObservable"
-        const val REMOVE_CONTENT_ERROR_OBSERVABLE = "removeContentErrorObservable"
-        const val GET_CONTENT_OBSERVABLE = "getContentObservable"
-        const val GET_CONTENT_BY_URL_OBSERVABLE = "getContentByUrlObservable"
     }
 }

@@ -7,61 +7,61 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import com.example.webviewscreenshot.DI.component.ActivityComponent
+import com.example.webviewscreenshot.DI.component.DaggerActivityComponent
+import com.example.webviewscreenshot.DI.module.ActivityModule
 import com.example.webviewscreenshot.R
+import com.example.webviewscreenshot.application.ScreenshotApplication
 import com.example.webviewscreenshot.domain.model.Content
-import com.example.webviewscreenshot.domain.model.ContentDao
-import com.example.webviewscreenshot.domain.repository.ContentDaoRepository
 import com.example.webviewscreenshot.utils.*
 import com.example.webviewscreenshot.viewmodel.MainViewModel
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_history.*
+import javax.inject.Inject
 
 class HistoryActivity : AppCompatActivity() {
-    private lateinit var mMainViewModel: MainViewModel
+    @Inject lateinit var mMainViewModel: MainViewModel
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private lateinit var mContentAdapter: ContentAdapter
     private var itemPosition: Int = 0
     lateinit var imagePath: String
+    lateinit var activityComponent: ActivityComponent
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mMainViewModel = MainViewModel(ContentDaoRepository(ContentDao(this)))
+        activityComponent = DaggerActivityComponent
+            .builder()
+            .appComponent((application as ScreenshotApplication).screenShotComponent)
+            .activityModule(ActivityModule(this))
+            .build()
+        activityComponent.inject(this)
+
         loadView()
         respondToClicks()
         listenToObservables()
     }
 
     private fun listenToObservables() {
-        mMainViewModel.getContentObservable.subscribe({
+        ScreenshotApplication.getAsyncComponent().getGetContentObservable().subscribe({
             history_progress_bar.hide()
             if (it.size == 0)
                 showSuccessMessage(this, R.string.empty_list)
             updateContentList(it)
         })
-        mMainViewModel.getContentErrorObservable.subscribe({
+        ScreenshotApplication.getAsyncComponent().getGetContentErrorObservable().subscribe({
             history_progress_bar.hide()
             showFailMessage(this, R.string.get_history_failed)
         })
-        mMainViewModel.getContentByUrlObservable.subscribe({
+        ScreenshotApplication.getAsyncComponent().getGetContentByUrlObservable().subscribe({
             history_progress_bar.hide()
             if (it.size == 0)
                 showSuccessMessage(this, R.string.empty_list)
             updateContentList(it)
         })
-        mMainViewModel.getContentByUrlErrorObservable.subscribe({
+        ScreenshotApplication.getAsyncComponent().getGetContentByUrlErrorObservable().subscribe({
             history_progress_bar.hide()
             showFailMessage(this, R.string.get_history_failed)
-        })
-        mMainViewModel.removeContentObservable.subscribe({
-            history_progress_bar.hide()
-            //update recyclerview
-            mContentAdapter.removeItem(itemPosition)
-            //remove image from device internal storage
-            removeFromInternalStorage(imagePath)
-            showSuccessMessage(this, R.string.remove_content_success)
-        })
-
-        mMainViewModel.removeContentErrorObservable.subscribe({
-            showFailMessage(this, R.string.remove_content_failed)
         })
     }
 
@@ -79,6 +79,7 @@ class HistoryActivity : AppCompatActivity() {
                 position: Int,
                 content: Content
             ) {
+                listentoListObservebles()
                 itemPosition = position
                 imagePath = content.imageRef.toString()
                 //remove item from DB
@@ -121,6 +122,7 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        finish()
         onBackPressed()
         return true
     }
@@ -134,8 +136,22 @@ class HistoryActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         mMainViewModel.cancelDBConnection()
+    }
+
+    fun listentoListObservebles(){
+        ScreenshotApplication.getAsyncComponent().getRemoveContentObservable().subscribe({
+            history_progress_bar.hide()
+            //update recyclerview
+            mContentAdapter.removeItem(itemPosition)
+            //remove image from device internal storage
+            removeFromInternalStorage(imagePath)
+            showSuccessMessage(this, R.string.remove_content_success)
+        })
+        ScreenshotApplication.getAsyncComponent().getRemoveContentErrorObservable().subscribe({
+            showFailMessage(this, R.string.remove_content_failed)
+        })
     }
 }
