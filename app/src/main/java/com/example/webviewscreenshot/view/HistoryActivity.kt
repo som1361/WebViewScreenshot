@@ -23,8 +23,12 @@ class HistoryActivity : AppCompatActivity() {
     @Inject lateinit var mMainViewModel: MainViewModel
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private lateinit var mContentAdapter: ContentAdapter
-    private var itemPosition: Int = 0
-    lateinit var imagePath: String
+    companion object
+    {
+        lateinit var imagePath: String
+        var itemPosition: Int = 0
+    }
+
     lateinit var activityComponent: ActivityComponent
 
 
